@@ -1,0 +1,102 @@
+<div class="chat-container">
+
+  <!-- Header -->
+  <div class="chat-header">
+    <!-- <div class="model-badge">GPT-4o · CodeCoach AI</div> -->
+    <div class="model-badge">LLaMA 3.3 · CodeCoach AI</div>
+    <div class="header-actions">
+      <button class="icon-btn" title="Clear chat" (click)="clearChat()">🗑️</button>
+    </div>
+  </div>
+
+  <!-- Messages area — always present, never removed from DOM -->
+  <div class="messages-area" #messagesArea>
+
+    <!-- Welcome screen — hidden via CSS when messages exist, NOT *ngIf -->
+    <div class="welcome" [class.hidden]="messages.length > 0">
+      <div class="welcome-icon">⚡</div>
+      <h1>CodeCoach AI</h1>
+      <p>Your personal DSA + Interview preparation assistant.</p>
+      <div class="suggestions">
+        <button class="suggestion-chip" (click)="useSuggestion('Explain Binary Search with code')">
+          🔍 Explain Binary Search with code
+        </button>
+        <button class="suggestion-chip" (click)="useSuggestion('What is Dynamic Programming?')">
+          🧠 What is Dynamic Programming?
+        </button>
+        <button class="suggestion-chip" (click)="useSuggestion('Give me a mock interview question')">
+          🎯 Give me a mock interview question
+        </button>
+        <button class="suggestion-chip" (click)="useSuggestion('Debug this code for me')">
+          🐛 Debug this code for me
+        </button>
+      </div>
+    </div>
+
+    <!-- Message list -->
+    <app-message
+      *ngFor="let msg of messages"
+      [message]="msg">
+    </app-message>
+
+    <!-- Typing indicator -->
+    <div class="typing-indicator" *ngIf="isLoading && messages[messages.length-1]?.content === ''">
+      <span></span><span></span><span></span>
+    </div>
+
+  </div>
+
+  <!-- Input area -->
+  <div class="input-area">
+    <div class="input-wrapper">
+      
+      <!-- File upload button -->
+    <button class="attach-btn" (click)="fileInput.click()" title="Attach file">
+      📎
+    </button>
+
+    <!-- Hidden file input -->
+    <input
+      #fileInput
+      type="file"
+      style="display:none"
+      accept=".pdf,.txt,.js,.ts,.py,.java,.cpp,.c,.html,.css,.json,.md"
+      (change)="onFileSelected($event)">
+
+    <!-- Selected file badge -->
+    <div class="file-badge" *ngIf="selectedFile">
+      <span>📄 {{ selectedFile.name }}</span>
+      <button class="remove-file" (click)="removeFile()">✕</button>
+    </div>
+
+
+      <textarea
+        #inputBox
+        [(ngModel)]="userInput"
+        placeholder="Ask about DSA, debugging, interviews..."
+        rows="1"
+        (keydown.enter)="onEnter($any($event))"
+        (input)="autoResize($event)">
+      </textarea>
+      <button
+        class="send-btn"
+        [disabled]="(!userInput.trim() && !selectedFile) || isLoading"
+        (click)="sendMessage()">
+        <span *ngIf="!isLoading">➤</span>
+        <span *ngIf="isLoading">⏳</span>
+      </button>
+    </div>
+
+    <!-- File preview info -->
+  <div class="file-preview" *ngIf="selectedFile">
+    <span class="file-type-badge" [class]="getFileTypeClass()">
+      {{ getFileExtension() }}
+    </span>
+    <span class="file-size">{{ getFileSize() }}</span>
+    <span class="file-hint">File will be sent with your next message</span>
+  </div>
+  
+    <p class="input-hint">Press Enter to send · Shift+Enter for new line</p>
+  </div>
+
+</div>

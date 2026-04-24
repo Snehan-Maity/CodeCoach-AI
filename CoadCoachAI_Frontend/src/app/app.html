@@ -1,0 +1,9 @@
+<div class="app-shell">
+  <app-sidebar
+    #sidebar
+    (sessionSelected)="chat.loadSession($event)"
+    (newChatClicked)="chat.createNewSession(); sidebar.setActive('')"
+    (ragQuestion)="chat.askFromDocument($event)">
+  </app-sidebar>
+  <app-chat #chat></app-chat>
+</div>

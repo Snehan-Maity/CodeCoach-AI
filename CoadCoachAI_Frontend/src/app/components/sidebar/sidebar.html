@@ -1,0 +1,50 @@
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <div class="logo">
+      <span class="logo-icon">⚡</span>
+      <span class="logo-text">CodeCoach AI</span>
+    </div>
+    <button class="new-chat-btn" (click)="newChat()">+ New Chat</button>
+  </div>
+
+  <div class="chat-history">
+    <p class="history-label">Recent</p>
+
+    <div
+      class="history-item"
+      *ngFor="let session of sessions; trackBy: trackBySessionId"
+      [class.active]="session.sessionId === activeId"
+      (click)="selectSession(session.sessionId)">
+
+      <span class="history-icon">💬</span>
+
+      <div class="history-info">
+        <span class="history-title">{{ session.title }}</span>
+        <span class="history-time">{{ getTimeLabel(session.updatedAt) }}</span>
+      </div>
+
+      <button
+        class="delete-btn"
+        (click)="deleteSession($event, session.sessionId)"
+        title="Delete chat">
+        🗑️
+      </button>
+    </div>
+
+    <!-- RAG Panel -->
+    <div class="rag-divider"></div>
+    <app-rag-panel (askFromDoc)="onAskFromDoc($event)"></app-rag-panel>
+
+    <div class="empty-state" *ngIf="sessions.length === 0">
+      <p>No chats yet.</p>
+      <p>Start a new conversation!</p>
+    </div>
+  </div>
+
+  <div class="sidebar-footer">
+    <div class="user-info">
+      <div class="avatar">U</div>
+      <span>User</span>
+    </div>
+  </div>
+</aside>

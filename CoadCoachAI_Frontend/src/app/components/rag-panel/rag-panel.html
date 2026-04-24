@@ -1,0 +1,58 @@
+<div class="rag-panel">
+
+  <div class="rag-header">
+    <span class="rag-icon">📚</span>
+    <span class="rag-title">My Documents</span>
+  </div>
+
+  <!-- Upload area -->
+  <div class="upload-area" (click)="pdfInput.click()">
+    <input #pdfInput type="file" accept=".pdf" style="display:none" (change)="onFileSelected($event)">
+    <div class="upload-content">
+      <span class="upload-icon">{{ isUploading ? '⏳' : '📤' }}</span>
+      <span class="upload-text">{{ isUploading ? 'Processing PDF...' : 'Click to upload PDF' }}</span>
+    </div>
+  </div>
+
+  <!-- Status messages -->
+  <div class="upload-success" *ngIf="uploadSuccess">{{ uploadSuccess }}</div>
+  <div class="upload-error" *ngIf="uploadError">⚠️ {{ uploadError }}</div>
+
+  <!-- Document list -->
+  <div class="doc-list" *ngIf="documents.length > 0">
+    <p class="doc-list-label">Uploaded PDFs</p>
+    <div
+      class="doc-item"
+      *ngFor="let doc of documents"
+      [class.selected]="doc._id === selectedDocId"
+      (click)="selectDoc(doc._id)">
+
+      <div class="doc-icon">📄</div>
+      <div class="doc-info">
+        <span class="doc-name">{{ doc.fileName }}</span>
+        <span class="doc-meta">{{ getFileSize(doc.fileSize) }} · {{ doc.totalChunks }} chunks</span>
+      </div>
+      <button class="doc-delete" (click)="deleteDocument(doc._id, $event)" title="Delete">✕</button>
+    </div>
+  </div>
+
+  <div class="empty-docs" *ngIf="documents.length === 0">
+    <p>No documents yet.</p>
+    <p>Upload a PDF to get started!</p>
+  </div>
+
+  <!-- Ask from document -->
+  <div class="ask-section" *ngIf="selectedDocId">
+    <p class="ask-label">Ask from selected document</p>
+    <div class="ask-input-row">
+      <input
+        type="text"
+        class="ask-input"
+        [(ngModel)]="question"
+        placeholder="Ask a question..."
+        (keydown.enter)="askQuestion()">
+      <button class="ask-btn" (click)="askQuestion()" [disabled]="!question.trim()">Ask</button>
+    </div>
+  </div>
+
+</div>

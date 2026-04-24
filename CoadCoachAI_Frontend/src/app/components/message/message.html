@@ -1,0 +1,76 @@
+<div class="message-row" [class.user-row]="isUser">
+
+  <div class="avatar" [class.user-avatar]="isUser">
+    {{ isUser ? 'U' : '⚡' }}
+  </div>
+
+  <div class="bubble" [class.user-bubble]="isUser">
+
+    <!-- Clickable file attachment -->
+    <div class="attached-file" *ngIf="isUser && message.fileName" (click)="openFilePreview()">
+  <div class="file-left">
+    <span class="file-icon">📄</span>
+  </div>
+
+  <div class="file-meta">
+    <div class="file-name-row">
+      <span class="file-name">{{ message.fileName }}</span>
+    </div>
+
+    <div class="file-subinfo">
+      <span class="file-ext-badge">{{ message.fileType }}</span>
+      <span class="file-dot">•</span>
+      <span class="file-size" *ngIf="message.fileSize">{{ message.fileSize }}</span>
+    </div>
+  </div>
+
+  <div class="file-view-hint">👁</div>
+</div>
+    
+    <!-- User message: plain text -->
+    <p class="content" *ngIf="isUser">{{ message.content }}</p>
+
+    <!-- Assistant message: rendered markdown -->
+    <div
+      class="markdown-content"
+      *ngIf="!isUser"
+      [innerHTML]="message.content | markdown">
+    </div>
+
+    <span class="timestamp">{{ message.timestamp | date:'shortTime' }}</span>
+  </div>
+
+</div>
+
+<!-- File content modal -->
+<div class="file-modal-overlay" *ngIf="showFilePreview" (click)="closeOnOverlay($event)">
+  <div class="file-modal">
+
+    <!-- Modal header -->
+    <div class="modal-header">
+      <div class="modal-title">
+        <span class="modal-icon">📄</span>
+        <div>
+          <div class="modal-filename">{{ message.fileName }}</div>
+          <div class="modal-meta">
+            <span class="file-ext-badge">{{ message.fileType }}</span>
+            <span class="file-dot">•</span>
+            <span>{{ message.fileSize }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="modal-copy-btn" (click)="copyFileContent()">
+          {{ fileCopied ? '✓ Copied!' : '⎘ Copy all' }}
+        </button>
+        <button class="modal-close-btn" (click)="closeFilePreview()">✕</button>
+      </div>
+    </div>
+
+    <!-- Modal body — file content -->
+    <div class="modal-body">
+      <pre class="file-content-pre"><code>{{ message.fileContent }}</code></pre>
+    </div>
+
+  </div>
+</div>
